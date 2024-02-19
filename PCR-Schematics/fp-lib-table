@@ -1,0 +1,5 @@
+(fp_lib_table
+  (version 7)
+  (lib (name "Module_RaspberryPi_Pico")(type "KiCad")(uri "C:/Program Files/KiCad/7.0/share/kicad/RaspberryPi_Pico/Module_RaspberryPi_Pico.pretty")(options "")(descr ""))
+  (lib (name "DRV8870DDA")(type "KiCad")(uri "C:/Program Files/KiCad/7.0/share/kicad/DRV8870DDA")(options "")(descr ""))
+)
