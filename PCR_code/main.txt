@@ -1,0 +1,46 @@
+/**
+ * Copyright (c) 2021 Raspberry Pi (Trading) Ltd.
+ *
+ * SPDX-License-Identifier: BSD-3-Clause
+*/
+
+#include <stdio.h>
+#include "pico/stdlib.h"
+#include "hardware/gpio.h"
+#include "hardware/uart.h"
+#include "pico/binary_info.h"
+
+/* Example code to extract analog values from a microphone using the ADC
+   with accompanying Python file to plot these values
+
+   Connections on Raspberry Pi Pico board, other boards may vary.
+
+   GPIO 26/ADC0 (pin 31)-> AOUT or AUD on microphone board
+   3.3v (pin 36) -> VCC on microphone board
+   GND (pin 38)  -> GND on microphone board
+*/
+
+#define DRV_IN_n 12
+#define DRV_IN_p 13
+
+
+int main() {
+    stdio_init_all();
+    printf("PCR heating...\n");
+
+    gpio_init(DRV_IN_n);
+    gpio_init(DRV_IN_p);
+
+    gpio_set_dir(DRV_IN_n, GPIO_OUT);
+    gpio_set_dir(DRV_IN_p, GPIO_OUT);
+
+    while (1) {
+        gpio_put(DRV_IN_n, 1);
+        gpio_put(DRV_IN_p, 0);
+        printf("%d\n", DRV_IN_n );
+        sleep_ms(5000);
+        gpio_put(DRV_IN_n, 0);
+        gpio_put(DRV_IN_p, 1);
+        sleep_ms(5000);
+    }
+}
