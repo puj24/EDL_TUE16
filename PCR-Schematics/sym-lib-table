@@ -1,6 +1,0 @@
-(sym_lib_table
-  (version 7)
-  (lib (name "MCU_Module_RaspberryPi_Pico")(type "KiCad")(uri "C:/Program Files/KiCad/7.0/share/kicad/RaspberryPi_Pico/MCU_Module_RaspberryPi_Pico.kicad_sym")(options "")(descr ""))
-  (lib (name "DRV8870DDA")(type "KiCad")(uri "C:/Program Files/KiCad/7.0/share/kicad/EXTRA_COMPONENTS/DRV8870DDA/DRV8870DDA.kicad_sym")(options "")(descr ""))
-  (lib (name "NTR3C21NZT1G")(type "KiCad")(uri "C:/Program Files/KiCad/7.0/share/kicad/EXTRA_COMPONENTS/NTR3C21NZT1G/NTR3C21NZT1G.kicad_sym")(options "")(descr ""))
-)
