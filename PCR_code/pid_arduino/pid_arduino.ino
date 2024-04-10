@@ -37,13 +37,14 @@ unsigned long previousMillis, currentMillis;
 #define KD_cool 0.7 
 
 float current_setpoint, current_temp ;
-float ideal_temp, prev_stage_temp;
+float ideal_temp, prev_setpoint;
 
 float i_e, prev_error, prev_time , output;
 int mode;
 #define const_duty_cycle 0.5
 
 void maintain_temp(float duration){
+    previousMillis = millis()/1000.0;
     currentMillis = millis()/1000.0;
 
     while ((currentMillis - previousMillis) < duration) { 
@@ -54,12 +55,12 @@ void maintain_temp(float duration){
       current_temp = thermo.temperature(RNOMINAL, RREF);
       Serial.print("Temperature:"); Serial.print(current_temp);   Serial.print(",");
              
-      pid(current_setpoint, current_temp, mode);
-      
+      pid(current_setpoint, current_temp, mode);      
       control_peltier(output);
 
       currentMillis = millis()/1000.0; 
     }
+    i_e = 0.0;
 }
 
 void control_peltier(float duty_cycle) {
@@ -114,7 +115,7 @@ void setup() {
     pinMode(PELTIER_PIN1, OUTPUT);
     pinMode(PELTIER_PIN2, OUTPUT);
     thermo.begin(MAX31865_3WIRE); 
-    prev_stage_temp = thermo.temperature(RNOMINAL, RREF);  // initial temperature
+    prev_setpoint = thermo.temperature(RNOMINAL, RREF);  // initial temperature
      
     current_setpoint = SETPOINT_1;  stage = 1; 
     mode = 0; // 0 for Heating, 1 for Cooling
@@ -128,11 +129,11 @@ void loop() {
     print_time(seconds);
 
     if(mode == 0){
-      ideal_temp = prev_stage_temp + 2*(seconds - currentMillis);
+      ideal_temp = prev_setpoint + 2*(seconds - currentMillis);
       if(ideal_temp > current_setpoint) ideal_temp = current_setpoint;
     }
     else{
-      ideal_temp = prev_stage_temp - 2*(seconds - currentMillis);
+      ideal_temp = prev_setpoint - 2*(seconds - currentMillis);
       if(ideal_temp < current_setpoint) ideal_temp = current_setpoint;
     }
 
@@ -144,35 +145,24 @@ void loop() {
     Serial.print("Setpoint:"); Serial.print(current_setpoint);   Serial.print(",");
 
     pid_control();
+
     if ( (stage == 1 )&& (current_temp > SETPOINT_1 - 0.8)) { //  Serial.println("SETPOINT GREATER THAN 95");
-        previousMillis = millis()/1000.0;
-        ideal_temp = SETPOINT_1;
         maintain_temp(CONST_S1);
-        prev_stage_temp = SETPOINT_1;
-        i_e = 0.0;
+        prev_setpoint = SETPOINT_1;
         current_setpoint = SETPOINT_2;
-        mode = 1;   // next stage - cooling
-        stage++;
+        mode = 1;   stage++;  // next stage - cooling
     }
     else if ( (stage == 2 )&& (current_temp < SETPOINT_2 + 0.5)) {  // Serial.println("SETPOINT LESSER THAN 63");
-        previousMillis = millis()/1000.0;
-        ideal_temp = SETPOINT_2;
         maintain_temp(CONST_S2);
-        prev_stage_temp = SETPOINT_2;
-        i_e = 0.0;
+        prev_setpoint = SETPOINT_2;
         current_setpoint = SETPOINT_3;
-        mode = 0;   // next stage - heating
-        stage++;
+        mode = 0;   stage++; // next stage - heating
     }
-    else if ((stage == 3) && (current_temp > SETPOINT_3 - 0.5)){    //  Serial.println("SETPOINT GREATER THAN 72.5");
-          previousMillis = millis()/1000.0;
-          ideal_temp = SETPOINT_3;
-          maintain_temp(CONST_S3);
-          prev_stage_temp = SETPOINT_3;
-          i_e = 0.0;
-          current_setpoint = SETPOINT_1;
-          mode = 0; // next stage - heating
-          stage = 1;
+    else if ((stage == 3) && (current_temp > SETPOINT_3 - 0.5)){    //  Serial.println("SETPOINT GREATER THAN 72.5");        
+        maintain_temp(CONST_S3);
+        prev_setpoint = SETPOINT_3;
+        current_setpoint = SETPOINT_1;
+        mode = 0;    stage = 1; // next stage - heating
     }
     delay(10);
 }
