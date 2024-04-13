@@ -1,0 +1,35 @@
+cmake_minimum_required(VERSION 3.12)
+
+#Include build functions for Pico SDK
+include(pico_sdk_import.cmake)
+
+
+#set name of project (as PROJECT NAME) and C/C++ standards
+project(PCR C CXX ASM)
+set(CMAKE_C_STANDARD 11)
+set(CMAKE_CXX_STANDARD 17)
+
+#create a pico-sdk subdirectory in our project for the libraries
+pico_sdk_init()
+
+#Tell CMake where to find the executable source file
+add_executable(PCR
+ PID.c
+)
+#Create map/bin/hex/uf2 files
+pico_add_extra_outputs(PCR)
+
+pico_enable_stdio_usb(PCR 1)
+
+pico_enable_stdio_uart(PCR 0)
+
+#Link to pico_stdlib (gpio, time, etc, functions)
+target_link_libraries(PCR
+ pico_stdlib
+ hardware_gpio
+ hardware_pwm
+ hardware_clocks
+ hardware_adc
+ hardware_uart
+ pico_binary_info
+)
