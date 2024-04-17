@@ -52,9 +52,6 @@ class Plotter:
         return self.line,
 
 def serial_getter():
-    # grab fresh ADC values
-    # note sometimes UART drops chars so we try a max of 5 times
-    # to get proper data
     while True:
         for i in range(5):
             line = ser.readline()
@@ -68,6 +65,7 @@ def serial_getter():
 if len(sys.argv) < 2:
     raise Exception("Ruh roh..no port specified!")
 
+print(sys.argv[1])
 ser = serial.Serial(sys.argv[1], 9600, timeout=1)
 
 fig, ax = plt.subplots()
