@@ -376,7 +376,7 @@ class Ui_MainWindow(QMainWindow):
 
 
 if __name__ == "__main__":
-    fake_init()
+    
     app = QApplication(sys.argv)
     MainWindow = QMainWindow()
     ui = Ui_MainWindow()
@@ -388,8 +388,11 @@ if __name__ == "__main__":
 
     if ui.serial_port.open(QSerialPort.ReadWrite):
         MainWindow.show()
+        fake_init()
         sys.exit(app.exec_())
     else:
-        print("Failed to open serial port.")
-        sys.exit(1)
+        MainWindow.show()
+        sys.exit(app.exec_())
+    #     print("Failed to open serial port.")
+    #     sys.exit(1)
 
